@@ -9,7 +9,7 @@ function sortByNumber(input) {
 
   let sortedWords = [];
 
-  words.forEach((word, index) => {
+  words.forEach((word) => {
     //Filter out only the number in the word
     const number = word.replace(/\D/g, "");
 
