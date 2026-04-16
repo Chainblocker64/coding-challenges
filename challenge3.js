@@ -5,7 +5,7 @@ function sortByNumber(input) {
   }
 
   //Split string into array of single words / divide by spaces
-  let words = input.split(" ");
+  const words = input.split(" ");
 
   let sortedWords = [];
 
