@@ -1,7 +1,7 @@
 function startGame(mode) {
   //Create 50*50 grid
   let grid = Array(50).fill(Array(50).fill("#"));
-  grid = applyMode(mode, grid);
+  grid = randomizeGrid(grid);
   console.log(render(grid));
   setInterval(() => {
     //Update grid with new generation and render
@@ -103,4 +103,23 @@ function render(grid) {
 
 function applyMode(mode, grid) {
   //TODO logic for applying modes
+  switch (mode) {
+    case "":
+  }
+}
+
+function randomizeGrid(grid) {
+  grid.forEach((row, rowIndex) => {
+    row.forEach((cells, cellIndex) => {
+      rand = Math.random();
+
+      if (rand >= 0.5) {
+        grid[rowIndex][cellIndex] = ".";
+      } else {
+        grid[rowIndex][cellIndex] = "#";
+      }
+    });
+  });
+
+  return grid;
 }
