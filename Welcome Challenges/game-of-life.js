@@ -1,12 +1,12 @@
-function startGame(mode) {
+function startGame() {
   //Create 50*50 grid
-  let grid = Array(50).fill(Array(50).fill("#"));
+  let grid = Array(5).fill(Array(5).fill("#"));
   grid = randomizeGrid(grid);
-  console.log(render(grid));
+  //console.log(render(grid));
   setInterval(() => {
     //Update grid with new generation and render
     grid = generationTick(grid);
-  }, 2000);
+  }, 200);
 }
 
 function generationTick(grid) {
@@ -58,8 +58,8 @@ function generationTick(grid) {
       }
     });
   });
-  console.clear();
-  console.log(render(newGeneration));
+  //console.clear();
+  //console.log(render(newGeneration));
   return newGeneration;
 }
 
@@ -109,10 +109,12 @@ function applyMode(mode, grid) {
 }
 
 function randomizeGrid(grid) {
+  debugger;
   grid.forEach((row, rowIndex) => {
-    row.forEach((cells, cellIndex) => {
-      rand = Math.random();
-
+    grid[rowIndex][2] = rowIndex + 5;
+    row.forEach((cell, cellIndex) => {
+      const rand = Math.random();
+      console.log(rowIndex, cellIndex, rand);
       if (rand >= 0.5) {
         grid[rowIndex][cellIndex] = ".";
       } else {
