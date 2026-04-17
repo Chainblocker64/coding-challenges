@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * Inaccurate to test cases
  */
@@ -69,4 +68,3 @@ function listIngredients(recipe) {
 }
 console.log(summarize(friedPotatoes));
 console.log(summarize(curry));
-//# sourceMappingURL=recipes.js.map
