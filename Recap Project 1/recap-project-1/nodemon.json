@@ -1,0 +1,6 @@
+{
+  "watch": ["src", ".env"],
+  "ext": "json,env",
+  "ignore": ["src/**/*.test.ts"],
+  "exec": "npm run start:dev"
+}

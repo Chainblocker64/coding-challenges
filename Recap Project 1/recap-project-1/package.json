@@ -1,0 +1,9 @@
+{
+  "scripts": {
+    "start:dev": "concurrently \"npx bookmonkey-api\" \"npx serve\" \"tsc --watch\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "nodemon": "^3.1.14"
+  }
+}
