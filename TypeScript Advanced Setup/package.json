@@ -1,0 +1,13 @@
+{
+  "scripts": {
+    "typecheck": "tsc --noEmit --watch",
+    "transpile": "tsx watch src/main.ts",
+    "start:dev": "concurrently \"npm run transpile\" \"npm run typecheck\"",
+    "dev": "nodemon"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "nodemon": "^3.1.14",
+    "tsx": "^4.21.0"
+  }
+}
