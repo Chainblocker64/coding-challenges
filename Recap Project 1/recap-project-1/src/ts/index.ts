@@ -1,6 +1,11 @@
-import { Book } from "../../types/book";
-
-const bookmonkeyApi = "http://localhost:4730/";
+import type { Book } from "../../types/book";
+import {
+  bookmonkeyApi,
+  fetchAllBooks,
+  searchBooksByTitle,
+  filterBooksByPublisher,
+  getPublishers,
+} from "./types.js";
 
 const booksTable = document.getElementById("book-listing") as HTMLTableElement;
 const search = document.getElementById("search") as HTMLInputElement;
@@ -9,7 +14,7 @@ const publisherSelect = document.getElementById(
 ) as HTMLSelectElement;
 const bookCount = document.getElementById("book-count") as HTMLSpanElement;
 
-const allBooks = (await fetchAllBooks()) as Book[];
+const allBooks = (await fetchAllBooks(bookmonkeyApi)) as Book[];
 const allPublishers = getPublishers(allBooks);
 
 const currentBooks = applyBookFilters(allBooks);
@@ -20,12 +25,6 @@ initPublisherFilter();
 /**
  * Functions
  */
-
-async function fetchAllBooks(): Promise<Book[]> {
-  const response = await fetch(`${bookmonkeyApi}books`);
-  const books = (await response.json()) as Book[];
-  return books;
-}
 
 function refreshBookListing(books: Book[]): void {
   booksTable.innerHTML = "";
@@ -69,23 +68,6 @@ function initPublisherFilter(): void {
   });
 }
 
-function searchBooksByTitle(books: Book[], title: string): Book[] {
-  // Make both strings upper case for comparison to make search case insensitive
-  title = title.toUpperCase();
-  const searchResult = books.filter((book) =>
-    book.title.toUpperCase().includes(title),
-  );
-  return searchResult;
-}
-
-function filterBooksByPublisher(books: Book[], publisher: string) {
-  if (!allPublishers.includes(publisher)) {
-    return books;
-  }
-  const filterResult = books.filter((book) => book.publisher === publisher);
-  return filterResult;
-}
-
 function renderBookRow(book: Book): string {
   return `
     <td>
@@ -109,7 +91,7 @@ function renderBookRow(book: Book): string {
     <td>
         <button
         class="button"
-        onclick="location.href = 'detail.html'"
+        onclick="location.href = 'detail.html?isbn=${book.isbn}'"
         >
         Detail
         </button>
@@ -130,10 +112,4 @@ function applyBookFilters(books: Book[] = allBooks): Book[] {
 
   refreshBookListing(books);
   return books;
-}
-
-function getPublishers(books: Book[]): string[] {
-  let publishers = books.map((book) => book.publisher);
-  publishers = [...new Set(publishers)];
-  return publishers;
 }

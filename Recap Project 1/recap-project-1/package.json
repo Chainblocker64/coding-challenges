@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "start:dev": "concurrently \"npx bookmonkey-api\" \"npx serve\" \"tsc --watch\""
+    "start:dev": "concurrently \"npx bookmonkey-api\" \"npx http-server -c-1\" \"tsc --watch\""
   },
   "devDependencies": {
     "concurrently": "^9.2.1",

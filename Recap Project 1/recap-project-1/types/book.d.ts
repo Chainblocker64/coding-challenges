@@ -10,4 +10,4 @@ export interface Book {
   cover: `http://${string}.png`;
 }
 
-type NumericalString = `${number}` | number;
+export type NumericalString = `${number}` | number;
