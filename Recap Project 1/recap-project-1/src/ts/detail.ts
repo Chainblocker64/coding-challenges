@@ -33,10 +33,6 @@ if (isbn) {
   cover.src = book.cover;
 }
 
-function insertTitle(book: Book): void {
-  titleElement.innerHTML = renderTitle(book);
-}
-
 function renderTitle(book: Book): string {
   return `
         <h1>
