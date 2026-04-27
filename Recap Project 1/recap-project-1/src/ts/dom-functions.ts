@@ -1,0 +1,104 @@
+import type { Book } from "./types.js";
+import { isFavorite, getFavorites } from "./types.js";
+
+//Update book count display above book list
+export function updateBookCount(count: number): void {
+  const bookCount = document.getElementById("book-count") as HTMLSpanElement;
+  bookCount.textContent = String(count);
+}
+
+//Update favorite amount in header
+export function updateFavoriteCount(): void {
+  const favoriteCount = document.getElementById(
+    "favorite-count",
+  ) as HTMLSpanElement;
+  favoriteCount.textContent = String(getFavorites().length);
+}
+
+//Return HTML for a single table row of book info
+export function renderBookRow(book: Book, mode = 0): string {
+  let favoriteButton = "";
+
+  switch (mode) {
+    case 1:
+      favoriteButton = deleteFavoriteSvg();
+      break;
+    default:
+      favoriteButton = isFavorite(book) ? favoriteSvg() : unfavoriteSvg();
+      break;
+  }
+
+  return `
+    <td>
+        <button class="button button-clear fav-btn">
+            ${favoriteButton}
+        </button>
+    </td>
+    <td>${book.title}</td>
+    <td>${book.isbn}</td>
+    <td>${book.author}</td>
+    <td>${book.publisher}</td>
+    <td>
+        <button
+        class="button"
+        onclick="location.href = 'detail.html?isbn=${book.isbn}'"
+        >
+        Detail
+        </button>
+    </td>
+  `;
+}
+
+//Return HTML for the favorite button
+export function favoriteSvg(): string {
+  return `
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      class="fav"
+    >
+      <path
+      d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z"
+      />
+    </svg>
+  `;
+}
+
+//Return HTML for the unfavorite button
+export function unfavoriteSvg(): string {
+  return `
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke-width="1.5"
+      stroke="currentColor"
+      class="fav"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"
+      />
+    </svg>
+  `;
+}
+
+//Return HTML for the remove favorite button
+export function deleteFavoriteSvg(): string {
+  return `
+        <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="currentColor"
+        class="fav"
+        >
+            <path
+            fill-rule="evenodd"
+            d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-1.72 6.97a.75.75 0 10-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 101.06 1.06L12 13.06l1.72 1.72a.75.75 0 101.06-1.06L13.06 12l1.72-1.72a.75.75 0 10-1.06-1.06L12 10.94l-1.72-1.72z"
+            clip-rule="evenodd"
+            />
+        </svg>
+    `;
+}

@@ -1,26 +1,23 @@
 import type { Book } from "./types.js";
-import { bookmonkeyApi, fetchBook } from "./types.js";
-
-let params = new URLSearchParams(document.location.search);
-const isbn = params.get("isbn") || "";
+import { bookmonkeyApi, fetchBook, updateFavoriteCount } from "./types.js";
 
 const titleElement = document.getElementById(
   "book-title",
 ) as HTMLHeadingElement;
-
 const abstractElement = document.getElementById(
   "abstract",
 ) as HTMLParagraphElement;
-
 const authorElement = document.getElementById("author") as HTMLSpanElement;
-
 const publisherElement = document.getElementById(
   "publisher",
 ) as HTMLSpanElement;
-
 const pagesElement = document.getElementById("pages") as HTMLSpanElement;
-
 const cover = document.getElementById("cover") as HTMLImageElement;
+
+let params = new URLSearchParams(document.location.search);
+const isbn = params.get("isbn") || "";
+
+updateFavoriteCount();
 
 if (isbn) {
   const book = await fetchBook(bookmonkeyApi, isbn);
@@ -33,6 +30,7 @@ if (isbn) {
   cover.src = book.cover;
 }
 
+//Return HTML for the h1
 function renderTitle(book: Book): string {
   return `
         <h1>
