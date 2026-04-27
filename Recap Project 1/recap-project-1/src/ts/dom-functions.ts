@@ -16,7 +16,7 @@ export function updateFavoriteCount(): void {
 }
 
 //Return HTML for a single table row of book info
-export function renderBookRow(book: Book, mode = 0): string {
+export function renderBookRow(book: Book, mode: number = 0): string {
   let favoriteButton = "";
 
   switch (mode) {
