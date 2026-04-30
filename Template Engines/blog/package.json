@@ -1,0 +1,18 @@
+{
+  "scripts": {
+    "dev": "nodemon",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "express": "^5.2.1",
+    "nodemon": "^3.1.14",
+    "nunjucks": "^3.2.4"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/nunjucks": "^3.2.6",
+    "prettier": "^3.8.3",
+    "prettier-plugin-jinja-template": "^2.1.0",
+    "tsx": "^4.21.0"
+  }
+}

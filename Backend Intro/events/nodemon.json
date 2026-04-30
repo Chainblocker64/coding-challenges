@@ -1,5 +1,0 @@
-{
-  "watch": ["src", "views"],
-  "ext": "json,ts,html",
-  "exec": "tsx src/index.ts"
-}

@@ -1,0 +1,13 @@
+{% macro contactField(id, type, placeholder, label) %}
+{% set tag = "textarea" if type == "textarea" else "input" %}
+<div class="form-floating">
+  <{{ tag }}
+    class="form-control"
+    id="{{ id }}"
+    {% if type %}type="{{ type}}"{% endif %}
+    placeholder="{{ placeholder }}"
+    {% if tag == "textarea" %}style="height: 12rem"{% endif %}
+    {% if tag == "input" %} />{% else %}></{{ tag }}>{% endif %}
+  <label for="{{ id }}">{{ label }}</label>
+</div>
+{% endmacro %}

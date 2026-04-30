@@ -1,0 +1,5 @@
+{
+  "watch": ["src", "views"],
+  "ext": "html,ts",
+  "exec": "tsx src --watch "
+}

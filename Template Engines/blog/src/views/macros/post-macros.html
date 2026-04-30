@@ -1,0 +1,14 @@
+{% macro postPreview(title, teaser, author, createdAt, urlSlug) %}
+<!-- Post preview-->
+<div class="post-preview">
+  <a href="post/{{ urlSlug }}">
+    <h2 class="post-title">{{ title }}</h2>
+    <h3 class="post-subtitle">{{ teaser }}</h3>
+  </a>
+  <p class="post-meta">
+    Posted by
+    <a href="#!">{{ author }}</a>
+    on {{ createdAt }}
+  </p>
+</div>
+{% endmacro %}
