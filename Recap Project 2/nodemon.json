@@ -1,0 +1,6 @@
+{
+  "watch": ["views"],
+  "ext": "html",
+  "ignore": ["node_modules"],
+  "exec": "npm run dev:start"
+}

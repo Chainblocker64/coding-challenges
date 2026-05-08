@@ -1,0 +1,3 @@
+{% extends "base.html" %} {% import "macros/trailCard.html" as trailCard %} {%
+block main_content %} {% for trail in trails %} {{ trailCard.trailCard(trail) }}
+{% else %} No trails found. {% endfor %} {% endblock %}

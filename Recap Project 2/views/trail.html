@@ -1,0 +1,7 @@
+{% extends "base.html" %} {% block main_content %}
+<h2>{{ trail.title }}</h2>
+<p>{{ trail.regionName }}, {{ trail.regionCountry }}</p>
+<p>Distance: {{ trail.distanceKm }} km</p>
+{{ trail.description | safe }}
+<p>{{ trail.createdAt }}</p>
+<img src="{{ trail.imageUrl }}" />{% endblock %}

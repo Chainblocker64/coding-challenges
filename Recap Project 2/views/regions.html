@@ -1,0 +1,9 @@
+{% extends "base.html" %} {% block main_content %} {% for region in regions %}
+<article>
+  <a href="/regions/{{ region.slug }}">
+    <h2>{{ region.name }}</h2>
+  </a>
+  <p>{{ region.country }}</p>
+  {{ region.description | safe }}
+</article>
+{% else %} No regions found. {% endfor %} {% endblock %}
