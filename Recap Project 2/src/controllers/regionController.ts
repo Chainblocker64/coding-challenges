@@ -11,6 +11,7 @@ export async function showRegions(
     response.render("regions.html", {
       regions: regions,
     });
+    return;
   } catch (error) {
     console.error(
       "An error occured while trying to fetch and display regions:",
@@ -19,6 +20,7 @@ export async function showRegions(
     response
       .status(500)
       .json({ error: "An error occured while trying to display regions." });
+    return;
   }
 }
 
@@ -44,6 +46,7 @@ export async function showRegion(
         return { ...trail, createdAt: formatDate(trail.createdAt) };
       }),
     });
+    return;
   } catch (error) {
     console.error(
       `An error occured while trying to fetch and display region with slug ${slug}:`,
@@ -52,10 +55,11 @@ export async function showRegion(
     response
       .status(500)
       .json({ error: "An error occured while trying to display region." });
+    return;
   }
 }
 
-//Could be reused but we don't have a "central" utils collection
+//Duplicate across different controlelrs but we don't have a "central" utils collection
 export function formatDate(unix: number): string {
   return new Date(unix * 1000).toLocaleDateString("en-US", {
     year: "numeric",

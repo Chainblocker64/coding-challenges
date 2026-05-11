@@ -1,12 +1,14 @@
 import { getDB } from "./db.js";
 
+export type Difficulty = "easy" | "moderate" | "hard";
+
 export interface Trail {
   title: string;
   slug: string;
-  difficulty: string;
+  difficulty: Difficulty;
   distanceKm: number;
   description: string;
-  imageUrl: URL;
+  imageUrl: string;
   createdAt: number;
 }
 
@@ -14,7 +16,7 @@ export interface TrailPayload extends Trail {
   regionId: number;
 }
 
-//TODO we could extend TrailPayload instead for the regionId field. Extend chains seem less readable though?
+//TODO is it better to reduce code repetition through extend chains or increase readibility (?) by repeating fields?
 export interface TrailDbObject extends Trail {
   id: number;
   regionId: number;
@@ -22,6 +24,8 @@ export interface TrailDbObject extends Trail {
 
 //TODO better naming?
 export interface TrailData extends TrailDbObject {
+  id: number;
+  regionId: number;
   regionName: string;
   regionCountry: string;
 }
@@ -109,6 +113,7 @@ export async function addTrail(trail: TrailPayload): Promise<number> {
       $distance_km: trail.distanceKm,
       $description: trail.description,
       $image_url: trail.imageUrl,
+      $region_id: trail.regionId,
       $created_at: trail.createdAt,
     },
   );
@@ -127,3 +132,5 @@ export async function deleteTrail(id: number): Promise<void> {
     },
   );
 }
+
+export function slugify() {}

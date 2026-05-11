@@ -12,6 +12,7 @@ export async function showTrails(
         return { ...trail, createdAt: formatDate(trail.createdAt) };
       }),
     });
+    return;
   } catch (error) {
     console.error(
       "An error occured while trying to fetch and display trails:",
@@ -20,6 +21,7 @@ export async function showTrails(
     response
       .status(500)
       .json({ error: "An error occured while trying to display trails." });
+    return;
   }
 }
 
@@ -39,6 +41,7 @@ export async function showTrail(
     response.render("trail.html", {
       trail: { ...trail, createdAt: formatDate(trail.createdAt) },
     });
+    return;
   } catch (error) {
     console.error(
       `An error occured while trying to fetch and display trail with slug ${slug}:`,
@@ -47,9 +50,11 @@ export async function showTrail(
     response
       .status(500)
       .json({ error: "An error occured while trying to display trail." });
+    return;
   }
 }
 
+//Duplicate across different controlelrs but we don't have a "central" utils collection
 export function formatDate(unix: number): string {
   return new Date(unix * 1000).toLocaleDateString("en-US", {
     year: "numeric",
