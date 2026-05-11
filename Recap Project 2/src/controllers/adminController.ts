@@ -1,7 +1,13 @@
 import type { Request, Response } from "express";
 import sanitizeHtml from "sanitize-html";
-import type { TrailPayload, Difficulty } from "../models/trailModel";
-import { getAllTrails, addTrail, deleteTrail } from "../models/trailModel.js";
+import type { TrailPayload, TrailData, Difficulty } from "../models/trailModel";
+import {
+  getAllTrails,
+  addTrail,
+  deleteTrail,
+  slugify,
+  getTrailById,
+} from "../models/trailModel.js";
 import { getAllRegions } from "../models/regionModel.js";
 
 const disallowAllTags = {
@@ -15,6 +21,7 @@ export async function showTrails(
 ): Promise<void> {
   try {
     const trails = await getAllTrails();
+    console.log(trails);
     response.render("admin/list.html", {
       trails: trails,
     });
@@ -31,14 +38,28 @@ export async function showTrails(
   }
 }
 
-export async function showForm(
-  _request: Request,
+export async function showTrailForm(
+  request: Request,
   response: Response,
 ): Promise<void> {
+  /**
+   * Check and handle id if present in parameters
+   */
+  let trail: TrailData | undefined = undefined;
+  if (request.params.id) {
+    const id = Number(request.params.id);
+    trail = await getTrailById(id);
+    if (!trail) {
+      //400 or 500?
+      response.status(400).json({ error: `No trail found by Id ${id}` });
+      return;
+    }
+  }
   try {
     const regions = await getAllRegions();
     response.render("admin/form.html", {
       regions: regions,
+      trail: trail,
     });
     return;
   } catch (error) {
@@ -77,32 +98,22 @@ export async function createTrail(
     disallowAllTags,
   ) as Difficulty;
   const distance = sanitizeHtml(request.body.distance, disallowAllTags);
-  if (isNaN(Number(distance))) {
-    response
-      .status(400)
-      .json({ error: `Distance ${distance} is not a number!` });
-  }
   const image = sanitizeHtml(request.body.image, disallowAllTags);
   const description = sanitizeHtml(request.body.description, {
     allowedTags: ["p", "b"],
     allowedAttributes: {},
   });
   const regionId = sanitizeHtml(request.body.regionId, disallowAllTags);
-  if (isNaN(Number(regionId))) {
-    response
-      .status(400)
-      .json({ error: `Region ID ${regionId} is not a number!` });
-  }
 
   const trail: TrailPayload = {
     title: title,
-    slug: "",
+    slug: slugify(title),
     difficulty: difficulty,
     distanceKm: Number(distance),
     description: description,
     imageUrl: image,
     regionId: Number(regionId),
-    createdAt: Date.now(),
+    createdAt: Date.now() / 1000,
   };
 
   try {

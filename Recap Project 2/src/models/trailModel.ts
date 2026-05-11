@@ -50,7 +50,6 @@ ON trails.region_id = regions.id`;
 export async function getAllTrails(): Promise<TrailData[]> {
   const db = getDB();
   const trails = await db.all<TrailData[]>(selectFields);
-
   return trails;
 }
 
@@ -133,4 +132,9 @@ export async function deleteTrail(id: number): Promise<void> {
   );
 }
 
-export function slugify() {}
+export function slugify(title: string): string {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}

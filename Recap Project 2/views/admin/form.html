@@ -1,14 +1,14 @@
 {% extends "../base.html" %} {% block header %}{% endblock %} {% block
-main_content %}
+main_content %} {{ trail | dump }}
 <form method="post" action="/admin/trails">
   <label for="title">Title:</label
-  ><input type="text" name="title" value="" required />
+  ><input type="text" name="title" value="{{ trail.title }}" required />
   <label for="difficulty">Difficulty:</label>
-  <select name="difficulty" required>
-    <option value="">Please select a region</option>
+  <select name="difficulty" value="{{ trail.difficulty }}" required>
+    <option value="">Please select a Difficulty</option>
+    {% for difficulty in ["easy", "moderate", "hard"] %}
     <option value="easy">Easy</option>
-    <option value="moderate">Moderate</option>
-    <option value="hard">Hard</option>
+    {% endfor %}
   </select>
   <label for="distance">Distance (km):</label
   ><input
@@ -20,9 +20,9 @@ main_content %}
     required
   />
   <label for="image">Image path:</label
-  ><input type="text" name="image" value="" required />
-  <label for="region">Region:</label>
-  <select name="region" required>
+  ><input type="text" name="image" value="" />
+  <label for="regionId">Region:</label>
+  <select name="regionId" required>
     <option value="">Please select a region</option>
     {% for region in regions %}
     <option value="{{ region.id }}">{{ region.name }}</option>

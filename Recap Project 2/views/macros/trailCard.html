@@ -1,6 +1,6 @@
 {% macro trailCard(trail) %}
 <article>
-  <ins>{{ trail.difficulty }}</ins>
+  <ins>{{ trail.difficulty | capitalize }}</ins>
   <a href="/trails/{{ trail.slug }}"><h2>{{ trail.title }}</h2></a>
   <p>{{ trail.createdAt }}</p>
   <p>{{ trail.description | safe }}</p>
