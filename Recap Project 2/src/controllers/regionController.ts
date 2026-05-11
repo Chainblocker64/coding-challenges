@@ -13,7 +13,7 @@ export async function showRegions(
     });
   } catch (error) {
     console.error(
-      "Encountered an error while trying to fetch and display regions :",
+      "An error occured while trying to fetch and display regions:",
       error,
     );
     response
@@ -45,10 +45,13 @@ export async function showRegion(
       }),
     });
   } catch (error) {
-    console.error("Encountered an error while trying to get trails:", error);
+    console.error(
+      `An error occured while trying to fetch and display region with slug ${slug}:`,
+      error,
+    );
     response
       .status(500)
-      .json({ error: "An error occured while trying to fetch trails." });
+      .json({ error: "An error occured while trying to display region." });
   }
 }
 

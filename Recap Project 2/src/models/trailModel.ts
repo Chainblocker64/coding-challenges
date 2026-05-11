@@ -7,12 +7,17 @@ export interface Trail {
   distanceKm: number;
   description: string;
   imageUrl: URL;
+  createdAt: number;
 }
 
+export interface TrailPayload extends Trail {
+  regionId: number;
+}
+
+//TODO we could extend TrailPayload instead for the regionId field. Extend chains seem less readable though?
 export interface TrailDbObject extends Trail {
   id: number;
   regionId: number;
-  createdAt: number;
 }
 
 //TODO better naming?
@@ -74,4 +79,51 @@ export async function getTrailsByRegionId(
   );
 
   return trails;
+}
+
+export async function getTrailById(id: number): Promise<TrailData | undefined> {
+  const db = getDB();
+  const trail = await db.get<TrailData>(
+    `
+      ${selectFields}
+      WHERE trails.id = $id`,
+    {
+      $id: id,
+    },
+  );
+
+  return trail;
+}
+
+export async function addTrail(trail: TrailPayload): Promise<number> {
+  const db = getDB();
+  const result = await db.run(
+    `
+    INSERT INTO trails (title, slug, difficulty, distance_km, description, image_url, created_at, region_id)
+    VALUES ($title, $slug, $difficulty, $distance_km, $description, $image_url, $created_at, $region_id)
+    `,
+    {
+      $title: trail.title,
+      $slug: trail.slug,
+      $difficulty: trail.difficulty,
+      $distance_km: trail.distanceKm,
+      $description: trail.description,
+      $image_url: trail.imageUrl,
+      $created_at: trail.createdAt,
+    },
+  );
+
+  return result.lastID!;
+}
+
+export async function deleteTrail(id: number): Promise<void> {
+  const db = getDB();
+  await db.run(
+    `
+    DELETE FROM trails
+    WHERE id = $id`,
+    {
+      $id: id,
+    },
+  );
 }

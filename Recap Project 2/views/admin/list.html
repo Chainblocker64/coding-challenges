@@ -1,0 +1,21 @@
+{% extends "../base.html" %} {% block header %} {% endblock %} {% block
+main_content %}<table>
+  {% for trail in trails %}
+  <tr>
+    <td>{{ trail.id }}</td>
+    <td>{{ trail.title }}</td>
+    <td>
+        <a href="/admin/trails/{{ trail.id }}/edit">
+            <button>Edit</button>
+        </href>
+    </td>
+    <td>
+        <form method="post" action="/admin/trails/{{ trail.id }}/delete">
+            <button type="submit">Delete</button>
+        </form>
+    </td>
+  </tr>
+  {% else %}
+    <tr><td>No trails found.</td></tr>
+  {% endfor %}
+</table>{% endblock %}

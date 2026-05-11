@@ -14,7 +14,7 @@ export async function showTrails(
     });
   } catch (error) {
     console.error(
-      "Encountered an error while trying to fetch and display trails :",
+      "An error occured while trying to fetch and display trails:",
       error,
     );
     response
@@ -40,10 +40,13 @@ export async function showTrail(
       trail: { ...trail, createdAt: formatDate(trail.createdAt) },
     });
   } catch (error) {
-    console.error("Encountered an error while trying to get trails:", error);
+    console.error(
+      `An error occured while trying to fetch and display trail with slug ${slug}:`,
+      error,
+    );
     response
       .status(500)
-      .json({ error: "An error occured while trying to fetch trails." });
+      .json({ error: "An error occured while trying to display trail." });
   }
 }
 

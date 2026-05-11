@@ -10,13 +10,15 @@
     />
   </head>
   <header>
+    {% block header %}
     <nav>
       <a href="/">Home</a>
       <a href="/regions">Regions</a>
     </nav>
+    {% endblock %}
   </header>
   <body>
     <main>{% block main_content %} {% endblock %}</main>
   </body>
-  <footer></footer>
+  <footer>{% block footer %}{% endblock %}</footer>
 </html>

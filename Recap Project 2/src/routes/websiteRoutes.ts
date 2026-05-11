@@ -1,4 +1,5 @@
 import express from "express";
+import adminRouter from "./adminRoutes.js";
 import * as trailController from "../controllers/trailController.js";
 import * as regionController from "../controllers/regionController.js";
 
@@ -8,5 +9,7 @@ router.get("/", trailController.showTrails);
 router.get("/trails/:slug", trailController.showTrail);
 router.get("/regions", regionController.showRegions);
 router.get("/regions/:slug", regionController.showRegion);
+
+router.use("/admin", adminRouter);
 
 export default router;

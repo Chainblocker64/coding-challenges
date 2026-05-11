@@ -1,6 +1,7 @@
 import express from "express";
 import nunjucks from "nunjucks";
 import routes from "./routes/websiteRoutes.js";
+import { logger } from "./middleware/logger.js";
 import { connectDB, closeDB } from "./models/db.js";
 
 type ExitSignal = "SIGINT" | "SIGTERM";
@@ -11,6 +12,7 @@ type ExitSignal = "SIGINT" | "SIGTERM";
 const app = express();
 const port = process.env.PORT || 3000;
 app.use(express.static("public"));
+app.use(logger);
 app.use("/", routes);
 
 /**
