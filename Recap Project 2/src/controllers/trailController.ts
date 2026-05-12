@@ -29,7 +29,6 @@ export async function showTrail(
   request: Request<{ slug: string }>,
   response: Response,
 ): Promise<void> {
-  //TODO Do I need to sanitize the slug?
   const slug = request.params.slug;
 
   try {

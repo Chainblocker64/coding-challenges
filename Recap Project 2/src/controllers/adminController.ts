@@ -134,6 +134,20 @@ export async function createTrail(
   }
 }
 
+export async function editTrail(
+  request: Request,
+  response: Response,
+): Promise<void> {}
+
+function sanitizeTrailInput(input: {
+  title: string;
+  difficulty: string;
+  distance: string;
+  image: string;
+  description: string;
+  regionId: string;
+}) {}
+
 export async function removeTrail(
   request: Request<{ id: number }>,
   response: Response,

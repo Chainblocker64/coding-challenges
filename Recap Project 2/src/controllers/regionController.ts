@@ -28,7 +28,6 @@ export async function showRegion(
   request: Request<{ slug: string }>,
   response: Response,
 ): Promise<void> {
-  //TODO Do I need to sanitize the slug?
   const slug = request.params.slug;
 
   try {
@@ -59,7 +58,6 @@ export async function showRegion(
   }
 }
 
-//Duplicate across different controlelrs but we don't have a "central" utils collection
 export function formatDate(unix: number): string {
   return new Date(unix * 1000).toLocaleDateString("en-US", {
     year: "numeric",

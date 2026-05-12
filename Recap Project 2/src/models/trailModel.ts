@@ -16,13 +16,11 @@ export interface TrailPayload extends Trail {
   regionId: number;
 }
 
-//TODO is it better to reduce code repetition through extend chains or increase readibility (?) by repeating fields?
 export interface TrailDbObject extends Trail {
   id: number;
   regionId: number;
 }
 
-//TODO better naming?
 export interface TrailData extends TrailDbObject {
   id: number;
   regionId: number;

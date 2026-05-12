@@ -1,5 +1,5 @@
 {% extends "../base.html" %} {% block header %}{% endblock %} {% block
-main_content %} {{ trail | dump }}
+main_content %}
 <form method="post" action="/admin/trails">
   <label for="title">Title:</label
   ><input type="text" name="title" value="{{ trail.title }}" required />
@@ -7,7 +7,9 @@ main_content %} {{ trail | dump }}
   <select name="difficulty" value="{{ trail.difficulty }}" required>
     <option value="">Please select a Difficulty</option>
     {% for difficulty in ["easy", "moderate", "hard"] %}
-    <option value="easy">Easy</option>
+    <option value="{{ difficulty }}" {{ "selected" if difficulty == trail.difficulty }}>
+      {{ difficulty | capitalize }}
+    </option>
     {% endfor %}
   </select>
   <label for="distance">Distance (km):</label
@@ -16,20 +18,20 @@ main_content %} {{ trail | dump }}
     step="0.1"
     min="0.1"
     name="distance"
-    value=""
+    value="{{ trail.distanceKm }}"
     required
   />
   <label for="image">Image path:</label
-  ><input type="text" name="image" value="" />
+  ><input type="text" name="image" value="{{ trail.imageUrl }}" />
   <label for="regionId">Region:</label>
   <select name="regionId" required>
     <option value="">Please select a region</option>
     {% for region in regions %}
-    <option value="{{ region.id }}">{{ region.name }}</option>
+    <option value="{{ region.id }}" {{ "selected" if region.id == trail.regionId else "" }}>{{ region.name }}</option>
     {% endfor %}
   </select>
   <label for="content">Description:</label
-  ><textarea name="description" placeholder="Description" required></textarea>
+  ><textarea name="description" placeholder="Description" required>{{ trail.description }}</textarea>
   <button type="submit" class="btn">Submit</button>
 </form>
 {% endblock %}
