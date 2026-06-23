@@ -1,0 +1,15 @@
+import { Auction } from "@/lib/services/auctionsService";
+
+export default function AuctionView({ auction }: { auction: Auction }) {
+  return (
+    <>
+      <p>Item: {auction.title}</p>
+      <p>{auction.description}</p>
+      <p>Starting Price: {auction.startingPrice}</p>
+      <p>Current Price: {auction.currentPrice}</p>
+      <p>Started: {new Date(auction.createdAt).toLocaleString()}</p>
+      <p>Until: {new Date(auction.endDate).toLocaleString()}</p>
+      <p>Seller: {auction.seller}</p>
+    </>
+  );
+}

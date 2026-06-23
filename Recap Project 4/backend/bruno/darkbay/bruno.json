@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "DarkBay Recap",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}
