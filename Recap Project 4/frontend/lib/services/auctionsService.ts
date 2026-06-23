@@ -1,3 +1,5 @@
+import { cookies } from "next/headers";
+
 export enum AuctionStatus {
   OPEN = "open",
   CLOSED = "closed",
@@ -74,6 +76,17 @@ export async function getAuctionById(id: string): Promise<Auction> {
   } catch (error) {
     throw new Error(`${error}`);
   }
+}
+
+export async function fetchAPI(url: string, options) {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("access_token");
+
+  if (accessToken) {
+    options.headers.Authorization = `Bearer ${accessToken}`;
+  }
+
+  const response = await fetch(url, options);
 }
 
 function buildQueryString({ page, limit }: QueryParams): string {

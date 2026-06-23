@@ -1,11 +1,3 @@
-export function buildQueryString(params: QueryParams): string {
-  const searchParams = new URLSearchParams();
-
-  Object.entries(params).forEach(([key, value]) => {
-    if (value !== undefined && value !== null) {
-      searchParams.append(key, value.toString());
-    }
-  });
-
-  return searchParams.toString();
+export function apiUrl(): string {
+  return process.env.DARKBAY_API_URL || "";
 }
