@@ -22,6 +22,11 @@ export type Meta = {
   totalPages: number;
 };
 
+export type QueryParams = {
+  page?: number;
+  limit?: number;
+};
+
 export type AuctionsResponse = {
   data: Auction[];
   meta: Meta;
@@ -34,19 +39,16 @@ if (!apiUrl) {
 }
 
 export async function getAuctionsWithMeta(
-  page?: number,
-  limit?: number,
+  queryParams: QueryParams = {},
 ): Promise<AuctionsResponse> {
   try {
-    let url = apiUrl + "/auctions";
+    let url = `${apiUrl}/auctions`;
 
-    if (page) {
-      url += `?page=${page}`;
-    }
-    if (limit) {
-      url += `?limit=${limit}`;
-    }
+    const queryString = buildQueryString(queryParams);
 
+    if (queryString) {
+      url += `?${queryString}`;
+    }
     const response = await fetch(`${url}`, {
       cache: "no-store",
     });
@@ -72,4 +74,18 @@ export async function getAuctionById(id: string): Promise<Auction> {
   } catch (error) {
     throw new Error(`${error}`);
   }
+}
+
+function buildQueryString({ page, limit }: QueryParams): string {
+  const queryParams: Record<string, string> = {};
+
+  if (page) {
+    queryParams.page = page.toString();
+  }
+
+  if (limit) {
+    queryParams.limit = limit.toString();
+  }
+
+  return new URLSearchParams(queryParams).toString();
 }

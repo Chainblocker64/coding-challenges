@@ -2,24 +2,29 @@
 import { useState } from "react";
 import AuctionList from "./AuctionList";
 import { loadAuctionData } from "@/lib/actions/auctionActions";
-import { Auction, AuctionsResponse } from "@/lib/services/auctionsService";
+import {
+  Auction,
+  AuctionsResponse,
+  QueryParams,
+} from "@/lib/services/auctionsService";
 
 export default function AuctionListing({
-  initialAuctionData,
+  initialData,
 }: {
-  initialAuctionData: AuctionsResponse;
+  initialData: AuctionsResponse;
 }) {
-  const initialMeta = initialAuctionData.meta;
-  const initialAuctions = initialAuctionData.data;
+  const initialMeta = initialData.meta;
+  const initialAuctions = initialData.data;
 
   const [meta, setMeta] = useState(initialMeta);
-  const { page, limit, totalPages } = meta;
   const [auctions, setAuctions] = useState<Auction[]>(initialAuctions);
 
-  async function reloadAuctions() {
-    const { data: auctions, meta } = await loadAuctionData(page, limit);
-    setAuctions(auctions);
+  const { page, limit, totalPages } = meta;
+
+  async function reloadAuctions(queryParams: QueryParams) {
+    const { data: auctions, meta } = await loadAuctionData(queryParams);
     setMeta(meta);
+    setAuctions(auctions);
   }
 
   return (
@@ -28,8 +33,9 @@ export default function AuctionListing({
       {page > 1 && (
         <button
           onClick={() => {
-            setMeta({ ...meta, page: page - 1 });
-            reloadAuctions();
+            const newPage = page - 1;
+            setMeta({ ...meta, page: newPage });
+            reloadAuctions({ limit: limit, page: newPage });
           }}
         >
           Back
@@ -38,8 +44,9 @@ export default function AuctionListing({
       {totalPages > page && (
         <button
           onClick={() => {
-            setMeta({ ...meta, page: page + 1 });
-            reloadAuctions();
+            const newPage = page + 1;
+            setMeta({ ...meta, page: newPage });
+            reloadAuctions({ limit: limit, page: newPage });
           }}
         >
           Forward
