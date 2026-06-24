@@ -1,9 +1,9 @@
 import { Auction } from "@/lib/services/auctionsService";
 
-export default function AuctionView({ auction }: { auction: Auction }) {
+export default function AuctionDetailView({ auction }: { auction: Auction }) {
   return (
     <>
-      <p>Item: {auction.title}</p>
+      <p>{auction.title}</p>
       <p>{auction.description}</p>
       <p>Starting Price: {auction.startingPrice}</p>
       <p>Current Price: {auction.currentPrice}</p>

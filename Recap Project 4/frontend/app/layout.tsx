@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { isAuthenticated } from "@/lib/services/authService";
 import { logoutAction } from "@/lib/actions/authActions";
+import Link from "next/link";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,6 +25,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const loggedIn = await isAuthenticated();
   return (
     <html
       lang="en"
@@ -32,16 +34,27 @@ export default async function RootLayout({
       <body className="min-h-full flex flex-col">
         <header>
           <nav>
-            {(await !isAuthenticated) && (
+            <li>
+              <Link href="/">Home</Link>
+            </li>
+            {!loggedIn && (
               <>
-                <li>Login</li>
-                <li>Register</li>
+                <li>
+                  <Link href="/login">Login</Link>
+                </li>
+                <li>
+                  {" "}
+                  <Link href="/register">Register</Link>
+                </li>
               </>
             )}
-            {(await isAuthenticated()) && (
-              <li>
-                <button onClick={logoutAction}>Logout</button>
-              </li>
+            {loggedIn && (
+              <>
+                <li>Welcome, you are logged in!</li>
+                <li>
+                  <button onClick={logoutAction}>Logout</button>
+                </li>
+              </>
             )}
           </nav>
         </header>

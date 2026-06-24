@@ -1,4 +1,5 @@
 import { cookies } from "next/headers";
+import { fetchAPI } from "./authService";
 
 export enum AuctionStatus {
   OPEN = "open",
@@ -16,6 +17,11 @@ export type Auction = {
   seller: string;
   status: AuctionStatus;
 };
+
+export type AuctionPayload = Omit<
+  Auction,
+  "id" | "currentPrice" | "endDate" | "createdAt" | "seller" | "status"
+>;
 
 export type Meta = {
   page: number;
@@ -51,7 +57,7 @@ export async function getAuctionsWithMeta(
     if (queryString) {
       url += `?${queryString}`;
     }
-    const response = await fetch(`${url}`, {
+    const response = await fetchAPI(`${url}`, {
       cache: "no-store",
     });
 
@@ -62,31 +68,42 @@ export async function getAuctionsWithMeta(
 }
 
 export async function getAuctions(
-  page?: number,
-  limit?: number,
+  queryParams: QueryParams,
 ): Promise<Auction[]> {
-  const { data: auctions } = await getAuctionsWithMeta(page, limit);
+  const { data: auctions } = await getAuctionsWithMeta(queryParams);
   return auctions;
 }
 
-export async function getAuctionById(id: string): Promise<Auction> {
+export async function getAuctionById(id: string): Promise<Auction | null> {
   try {
-    const response = await fetch(`${apiUrl}/auctions/${id}`);
-    return response.json();
+    const response = await fetchAPI(`${apiUrl}/auctions/${id}`);
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        return null;
+      } else {
+        throw new Error(`Error while fetching auction with ID ${id}`);
+      }
+    }
+
+    return await response.json();
   } catch (error) {
     throw new Error(`${error}`);
   }
 }
 
-export async function fetchAPI(url: string, options) {
-  const cookieStore = await cookies();
-  const accessToken = cookieStore.get("access_token");
-
-  if (accessToken) {
-    options.headers.Authorization = `Bearer ${accessToken}`;
+export async function createAuction(auction: AuctionPayload) {
+  try {
+    const url = `${apiUrl}/auctions`;
+    const response = fetchAPI(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  } catch (error) {
+    throw error;
   }
-
-  const response = await fetch(url, options);
 }
 
 function buildQueryString({ page, limit }: QueryParams): string {

@@ -4,7 +4,7 @@ export default function Login() {
   return (
     <form action={loginAction}>
       <input name="username" placeholder="Username" />
-      <input name="password" placeholder="Password" />
+      <input type="password" name="password" placeholder="Password" />
       <button type="submit">Login</button>
     </form>
   );

@@ -22,7 +22,7 @@ export async function loginAction(formData: FormData) {
     const { access_token: accessToken } = await response.json();
 
     if (!accessToken) {
-      return;
+      redirect("/");
     }
 
     const cookieStore = await cookies();
@@ -32,6 +32,8 @@ export async function loginAction(formData: FormData) {
       httpOnly: true,
     });
   }
+
+  redirect("/");
 }
 
 export async function registerAction(formData: FormData) {
@@ -47,6 +49,7 @@ export async function registerAction(formData: FormData) {
     },
     body: JSON.stringify({ username: username, password: password }),
   });
+  redirect("/");
 }
 
 export async function logoutAction() {

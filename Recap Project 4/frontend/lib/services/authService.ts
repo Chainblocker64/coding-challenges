@@ -6,3 +6,25 @@ export async function isAuthenticated() {
 
   return accessToken ? true : false;
 }
+
+export async function fetchAPI(
+  url: string,
+  requestOptions: RequestInit = {},
+): Promise<Response> {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("access_token");
+
+  let options = requestOptions;
+
+  if (accessToken) {
+    options = {
+      ...options,
+      headers: {
+        ...requestOptions.headers,
+        Authorization: `Bearer ${accessToken}`,
+      },
+    };
+  }
+
+  return await fetch(url, options);
+}
