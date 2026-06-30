@@ -1,8 +1,10 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 import { socket } from "./socket";
 
 function App() {
+  const [role, setRole] = useState<string>("");
+
   useEffect(() => {
     socket.connect();
 
@@ -18,9 +20,16 @@ function App() {
       console.log(`Login: ${success}, User ID: ${userId}`);
     };
 
+    const onRoleAssigned = (role: string) => {
+      setRole(role);
+    };
+
     socket.on("login", onLogin);
+    socket.on("roleAssigned", onRoleAssigned);
 
     return () => {
+      socket.off("login", onLogin);
+      socket.off("roleAssigned", onRoleAssigned);
       socket.disconnect();
     };
   }, []);
@@ -28,6 +37,9 @@ function App() {
   return (
     <div>
       <h1>Hide and Seek</h1>
+      <h3>
+        {role ? `You are the ${role}` : "Waiting for other players to join..."}
+      </h3>
     </div>
   );
 }

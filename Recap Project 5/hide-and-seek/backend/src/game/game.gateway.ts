@@ -31,61 +31,85 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     console.log(`Client connected: ${client.id}`);
 
     const roomId = this.freeRoom();
-    client.join(roomId);
-
     const role = this.newRole(roomId);
 
-    this.rooms.set(roomId, { ...room, [client.id]: role });
+    const room = this.rooms.get(roomId);
 
-    ////
-    void client.join(this.latestRoom.toString());
-    console.log(`Client ${client.id} joined room ${this.latestRoom}`);
+    if (room) {
+      this.rooms.set(roomId, { ...room, [client.id]: role });
+    } else {
+      this.rooms.set(roomId, { [client.id]: role });
+    }
 
-    console.log(
-      `User count for room ${this.latestRoom}} is currently ${this.currentUserCount()}`,
-    );
+    void client.join(roomId);
+    client.on('disconnecting', () => {
+      this.handleDisconnecting(client);
+    });
+    this.emitUserRoles(roomId);
   }
 
   handleDisconnect(client: Socket) {
     console.log(`Client disconnected: ${client.id}`);
   }
 
+  handleDisconnecting(client: Socket) {
+    const allRooms = Array.from(client.rooms) as UUID[];
+    const gameRooms = allRooms.filter((room) => room !== client.id);
+
+    gameRooms.forEach((roomId) => {
+      const room = this.rooms.get(roomId);
+      if (room) {
+        delete room[client.id];
+        if (Object.keys(room).length < 1) {
+          this.rooms.delete(roomId);
+        } else {
+          this.rooms.set(roomId, room);
+        }
+      }
+    });
+  }
+
+  emitUserRoles(roomId: UUID) {
+    const room = this.rooms.get(roomId);
+
+    if (this.userCount(roomId) > 1 && room) {
+      for (const [clientId, role] of Object.entries(room)) {
+        this.server.to(clientId).emit('roleAssigned', role);
+      }
+    }
+  }
+
   userCount(roomId: string): number {
     return this.server.sockets.adapter.rooms.get(roomId)?.size || 0;
   }
 
-  freeRoom() {
-    this.rooms.forEach((room, roomId) => {
+  freeRoom(): UUID {
+    for (const [roomId] of this.rooms) {
       if (this.userCount(roomId) < 2) {
         return roomId;
       }
-    });
-
+    }
     return randomUUID();
   }
 
   newRole(roomId: UUID): Role {
     const room = this.rooms.get(roomId);
 
-    let role = '';
-
     if (room) {
-      for (const [clientRole] of Object.values(room)) {
+      for (const [, clientRole] of Object.entries(room)) {
         if (clientRole === 'seeker') {
-          role = 'hider';
+          return 'hider';
         } else {
-          role = 'seeker';
+          return 'seeker';
         }
-      }
-    } else {
-      if (Math.random() >= 0.5) {
-        role = 'seeker';
-      } else {
-        role = 'seeker';
       }
     }
 
-    return role;
+    if (Math.random() >= 0.5) {
+      return 'seeker';
+    } else {
+      return 'hider';
+    }
   }
 
   @SubscribeMessage('login')
