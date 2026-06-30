@@ -1,5 +1,4 @@
 import {
-  ConnectedSocket,
   MessageBody,
   OnGatewayConnection,
   OnGatewayDisconnect,
@@ -13,6 +12,8 @@ import { GameService } from './game.service';
 import type { Role } from './game.service';
 
 type Room = Record<string, Role>;
+
+const MAX_PLAYERS = 2;
 
 @WebSocketGateway({
   cors: {
@@ -42,10 +43,14 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
 
     void client.join(roomId);
+
+    if (this.userCount(roomId) === MAX_PLAYERS) {
+      this.emitUserRoles(roomId);
+    }
+
     client.on('disconnecting', () => {
       this.handleDisconnecting(client);
     });
-    this.emitUserRoles(roomId);
   }
 
   handleDisconnect(client: Socket) {
@@ -58,13 +63,17 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     gameRooms.forEach((roomId) => {
       const room = this.rooms.get(roomId);
-      if (room) {
-        delete room[client.id];
-        if (Object.keys(room).length < 1) {
-          this.rooms.delete(roomId);
-        } else {
-          this.rooms.set(roomId, room);
-        }
+
+      if (!room) {
+        return;
+      }
+
+      delete room[client.id];
+
+      if (Object.keys(room).length === 0) {
+        this.rooms.delete(roomId);
+      } else {
+        this.rooms.set(roomId, room);
       }
     });
   }
@@ -72,7 +81,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   emitUserRoles(roomId: UUID) {
     const room = this.rooms.get(roomId);
 
-    if (this.userCount(roomId) > 1 && room) {
+    if (room && this.userCount(roomId) == MAX_PLAYERS) {
       for (const [clientId, role] of Object.entries(room)) {
         this.server.to(clientId).emit('roleAssigned', role);
       }
@@ -85,7 +94,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   freeRoom(): UUID {
     for (const [roomId] of this.rooms) {
-      if (this.userCount(roomId) < 2) {
+      if (this.userCount(roomId) < MAX_PLAYERS) {
         return roomId;
       }
     }
@@ -111,6 +120,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
       return 'hider';
     }
   }
+
+  initGame(roomId: UUID) {}
 
   @SubscribeMessage('login')
   handleLogin(@MessageBody() data: { connected: boolean; test: number }) {

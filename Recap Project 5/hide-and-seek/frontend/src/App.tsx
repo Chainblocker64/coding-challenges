@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 import { socket } from "./socket";
+import Grid from "./components/Grid";
 
 function App() {
   const [role, setRole] = useState<string>("");
@@ -40,6 +41,7 @@ function App() {
       <h3>
         {role ? `You are the ${role}` : "Waiting for other players to join..."}
       </h3>
+      <Grid></Grid>
     </div>
   );
 }
