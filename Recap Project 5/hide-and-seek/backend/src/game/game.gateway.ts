@@ -8,12 +8,10 @@ import {
 } from '@nestjs/websockets';
 import { randomUUID, UUID } from 'node:crypto';
 import { Server, Socket } from 'socket.io';
-import { GameService } from './game.service';
-import type { Role } from './game.service';
+import { GameService, MAX_PLAYERS } from './game.service';
+import type { Role, ClientId } from './game.service';
 
-type Room = Record<string, Role>;
-
-const MAX_PLAYERS = 2;
+type ClientRoles = Record<ClientId, Role>;
 
 @WebSocketGateway({
   cors: {
@@ -24,7 +22,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;
 
-  rooms = new Map<UUID, Room>();
+  rooms = new Map<UUID, ClientRoles>();
 
   constructor(private readonly gameService: GameService) {}
 
@@ -32,12 +30,12 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     console.log(`Client connected: ${client.id}`);
 
     const roomId = this.freeRoom();
-    const role = this.newRole(roomId);
+    const role = this.freeRole(roomId);
 
-    const room = this.rooms.get(roomId);
+    const clients = this.getClients(roomId);
 
-    if (room) {
-      this.rooms.set(roomId, { ...room, [client.id]: role });
+    if (clients) {
+      this.rooms.set(roomId, { ...clients, [client.id]: role });
     } else {
       this.rooms.set(roomId, { [client.id]: role });
     }
@@ -45,7 +43,7 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     void client.join(roomId);
 
     if (this.userCount(roomId) === MAX_PLAYERS) {
-      this.emitUserRoles(roomId);
+      const game = this.startGame(roomId);
     }
 
     client.on('disconnecting', () => {
@@ -62,27 +60,27 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const gameRooms = allRooms.filter((room) => room !== client.id);
 
     gameRooms.forEach((roomId) => {
-      const room = this.rooms.get(roomId);
+      const clients = this.getClients(roomId);
 
-      if (!room) {
+      if (!clients) {
         return;
       }
 
-      delete room[client.id];
+      delete clients[client.id];
 
-      if (Object.keys(room).length === 0) {
+      if (Object.keys(clients).length === 0) {
         this.rooms.delete(roomId);
       } else {
-        this.rooms.set(roomId, room);
+        this.rooms.set(roomId, clients);
       }
     });
   }
 
   emitUserRoles(roomId: UUID) {
-    const room = this.rooms.get(roomId);
+    const clients = this.getClients(roomId);
 
-    if (room && this.userCount(roomId) == MAX_PLAYERS) {
-      for (const [clientId, role] of Object.entries(room)) {
+    if (clients && this.userCount(roomId) == MAX_PLAYERS) {
+      for (const [clientId, role] of Object.entries(clients)) {
         this.server.to(clientId).emit('roleAssigned', role);
       }
     }
@@ -101,19 +99,25 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     return randomUUID();
   }
 
-  newRole(roomId: UUID): Role {
-    const room = this.rooms.get(roomId);
+  freeRole(roomId: UUID): Role {
+    const clients = this.getClients(roomId);
 
-    if (room) {
-      for (const [, clientRole] of Object.entries(room)) {
-        if (clientRole === 'seeker') {
-          return 'hider';
-        } else {
-          return 'seeker';
-        }
+    if (!clients) {
+      return this.randomRole();
+    }
+
+    for (const [, clientRole] of Object.entries(clients)) {
+      if (clientRole === 'seeker') {
+        return 'hider';
+      } else {
+        return 'seeker';
       }
     }
 
+    return this.randomRole();
+  }
+
+  randomRole(): Role {
     if (Math.random() >= 0.5) {
       return 'seeker';
     } else {
@@ -121,7 +125,41 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
   }
 
-  initGame(roomId: UUID) {}
+  startGame(roomId: UUID): void {
+    const hiderId = this.getClientByRole(roomId, 'hider');
+    const seekerId = this.getClientByRole(roomId, 'seeker');
+
+    if (!hiderId || !seekerId) {
+      return;
+    }
+
+    this.gameService.startNewGame(roomId, hiderId, seekerId);
+    console.log(this.gameService.getGame(roomId));
+  }
+
+  getClientRole(roomId: UUID, clientId: ClientId) {
+    const clientRoles = this.getClients(roomId);
+
+    return clientRoles?.[clientId];
+  }
+
+  getClientByRole(roomId: UUID, role: Role): string | undefined {
+    const clients = this.getClients(roomId);
+
+    if (!clients) {
+      return;
+    }
+
+    for (const [clientId, clientRole] of Object.entries(clients)) {
+      if (clientRole === role) {
+        return clientId;
+      }
+    }
+  }
+
+  getClients(roomId: UUID): ClientRoles | undefined {
+    return this.rooms.get(roomId);
+  }
 
   @SubscribeMessage('login')
   handleLogin(@MessageBody() data: { connected: boolean; test: number }) {
