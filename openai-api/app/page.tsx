@@ -68,6 +68,16 @@ export default function Home() {
     setActiveChat("");
   }
 
+  function handleDeleteChat(chatId: string) {
+    const updatedChats = { ...chats };
+    delete updatedChats[chatId];
+    setChats(updatedChats);
+
+    if (activeChat === chatId) {
+      setActiveChat("");
+    }
+  }
+
   return (
     <>
       <Sidebar
@@ -75,6 +85,7 @@ export default function Home() {
         activeChat={activeChat || ""}
         onSelectChat={handleSelectChat}
         onNewChat={handleNewChat}
+        onDeleteChat={handleDeleteChat}
       />
       <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
         <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
