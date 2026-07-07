@@ -52,7 +52,7 @@ export default function Sidebar({
                   }
                 }}
                 aria-label="Delete chat"
-                className="px-2 py-2 text-gray-400 hover:text-red-400"
+                className="cursor-pointer px-2 py-2 text-gray-400 hover:text-red-400"
               >
                 ×
               </button>
