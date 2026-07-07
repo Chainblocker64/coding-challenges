@@ -22,7 +22,7 @@ export default function Sidebar({
       <button
         type="button"
         onClick={onNewChat}
-        className="rounded px-3 py-2 text-left bg-gray-800 hover:bg-gray-700"
+        className="cursor-pointer rounded px-3 py-2 text-left bg-gray-800 hover:bg-gray-700"
       >
         + New Chat
       </button>
@@ -40,7 +40,7 @@ export default function Sidebar({
               <button
                 type="button"
                 onClick={() => onSelectChat(chatId)}
-                className="flex-1 truncate px-3 py-2 text-left"
+                className="flex-1 cursor-pointer truncate px-3 py-2 text-left"
               >
                 {truncate(messages[0]?.content ?? "New chat")}
               </button>
